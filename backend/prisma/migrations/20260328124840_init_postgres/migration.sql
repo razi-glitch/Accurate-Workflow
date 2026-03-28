@@ -1,17 +1,19 @@
 -- CreateTable
 CREATE TABLE "User" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "username" TEXT NOT NULL,
     "fullName" TEXT NOT NULL DEFAULT 'User',
     "passwordHash" TEXT NOT NULL,
-    "role" TEXT NOT NULL
+    "role" TEXT NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Job" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "jobId" TEXT NOT NULL,
-    "date" DATETIME NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL,
     "customer" TEXT NOT NULL,
     "jobName" TEXT NOT NULL,
     "size" TEXT NOT NULL,
@@ -23,42 +25,51 @@ CREATE TABLE "Job" (
     "designerId" INTEGER NOT NULL,
     "clientRelationsId" INTEGER NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'Design Pending',
-    "lastUpdate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "Job_designerId_fkey" FOREIGN KEY ("designerId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "Job_clientRelationsId_fkey" FOREIGN KEY ("clientRelationsId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "lastUpdate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Job_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "ActivityLog" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "action" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
-    "timestamp" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "ActivityLog_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "timestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "ActivityLog_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "ColorOption" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "name" TEXT NOT NULL
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "ColorOption_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "MaterialOption" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "name" TEXT NOT NULL
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "MaterialOption_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "FinishingOption" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "name" TEXT NOT NULL
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "FinishingOption_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "WindingOption" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "name" TEXT NOT NULL
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "WindingOption_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -78,3 +89,12 @@ CREATE UNIQUE INDEX "FinishingOption_name_key" ON "FinishingOption"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "WindingOption_name_key" ON "WindingOption"("name");
+
+-- AddForeignKey
+ALTER TABLE "Job" ADD CONSTRAINT "Job_designerId_fkey" FOREIGN KEY ("designerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Job" ADD CONSTRAINT "Job_clientRelationsId_fkey" FOREIGN KEY ("clientRelationsId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ActivityLog" ADD CONSTRAINT "ActivityLog_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
