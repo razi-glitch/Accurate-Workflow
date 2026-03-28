@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: accurate-workflow-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: DATABASE_URL
+        sync: false # You will paste your Neon database URL here during setup
+      - key: FRONTEND_URL
+        sync: false # You will add your Vercel URL here later
+      - key: JWT_SECRET
+        generateValue: true # Render will automatically generate a secure password string for this
