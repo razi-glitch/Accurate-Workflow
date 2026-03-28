@@ -58,7 +58,12 @@ app.post('/api/auth/login', async (req, res) => {
             { expiresIn: '12h' }
         );
 
-        res.cookie('token', token, { httpOnly: true, secure: false, sameSite: 'lax' }); // Secure false for local development
+        const isProduction = !!process.env.FRONTEND_URL;
+        res.cookie('token', token, { 
+            httpOnly: true, 
+            secure: isProduction, 
+            sameSite: isProduction ? 'none' : 'lax' 
+        });
 
         // Log activity
         await prisma.activityLog.create({
@@ -73,7 +78,12 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 app.post('/api/auth/logout', (req, res) => {
-    res.clearCookie('token');
+    const isProduction = !!process.env.FRONTEND_URL;
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? 'none' : 'lax'
+    });
     res.json({ message: 'Logged out successfully' });
 });
 
