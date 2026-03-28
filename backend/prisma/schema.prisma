@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int           @id @default(autoincrement())
+  username       String        @unique  // Used for logging in
+  fullName       String        @default("User") // Used for display
+  passwordHash   String
+  role           String        // Admin, Designer, Client Relations
+  designedJobs   Job[]         @relation("DesignerJobs")
+  clientJobs     Job[]         @relation("ClientJobs")
+  activityLogs   ActivityLog[]
+}
+
+model Job {
+  id               Int      @id @default(autoincrement())
+  jobId            String   @unique // 'ALM001234' ONLY NUMBER INPUT originally but starting with ALM
+  date             DateTime
+  customer         String
+  jobName          String
+  size             String   // (Width / Height)
+  die              String
+  colours          String   // Single Colour, Cmyk, Cmyk+White, etc
+  material         String   // Semi Glossy , Semi Silver , Glossy ,PP White , PP Silver , PP Clear
+  windingDirection String   // 1 -Sleeping Clockwise, etc
+  finishing        String   // None", Glossy Varnish", etc
+  
+  designerId       Int
+  designer         User     @relation("DesignerJobs", fields: [designerId], references: [id])
+  
+  clientRelationsId Int
+  clientRelations   User     @relation("ClientJobs", fields: [clientRelationsId], references: [id])
+  
+  status           String   @default("Design Pending") // Design Pending, Designing, Design Hold, Approved, Plate Process, Completed
+  lastUpdate       DateTime @default(now())
+}
+
+model ActivityLog {
+  id        Int      @id @default(autoincrement())
+  action    String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  timestamp DateTime @default(now())
+}
+
+model ColorOption {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+}
+
+model MaterialOption {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+}
+
+model FinishingOption {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+}
+
+model WindingOption {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+}
